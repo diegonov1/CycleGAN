@@ -222,7 +222,8 @@ with torch.no_grad():
     for idx, img in enumerate(test_loader):
         real_b = nn.functional.interpolate(img, size=target_shape)
         real_b = real_b.to(device)
-        fake_a = gen_BA(real_b)
+        #fake_a = gen_BA(real_b)
+        fake_a = gen_AB(real_b)
         catenation = torch.cat([real_b, fake_a])
         image_tensor = (catenation + 1) / 2
         image_shifted = image_tensor
@@ -230,5 +231,5 @@ with torch.no_grad():
         image_grid = make_grid(image_unflat[:25], nrow=5)
         plt.imshow(image_grid.permute(1, 2, 0).squeeze())
 
-        plt.savefig(output_ + f'figure_{idx}.jpg')
+        plt.savefig(output_ + f'figure_rev{idx}.jpg')
         plt.show()
