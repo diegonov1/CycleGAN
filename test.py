@@ -231,5 +231,5 @@ with torch.no_grad():
         image_grid = make_grid(image_unflat[:25], nrow=5)
         plt.imshow(image_grid.permute(1, 2, 0).squeeze())
 
-        plt.savefig(output_ + f'figure_rev{idx}.jpg')
+        plt.savefig(output_ + f'figure_{idx}_rev.png')
         plt.show()
