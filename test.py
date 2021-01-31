@@ -16,7 +16,9 @@ import matplotlib.pyplot as plt
 import torch.nn.functional as F
 
 weights_ = '/home/diegushko/checkpoint/cezanne2photo/'
+weight_p2m = '/home/diegushko/checkpoint/photo2monet/'
 output_ = '/home/diegushko/github/CycleGAN/out_images/'
+out_p2m = '/home/diegushko/github/CycleGAN/out_p2m/'
 test_path = '/home/diegushko/github/CycleGAN/test_images/'
 
 adv_criterion = nn.MSELoss() 
@@ -175,7 +177,7 @@ def weights_init(m):
 
 pretrained = True
 if pretrained:
-    pre_dict = torch.load(weights_ + 'cycleGAN_99.pth')
+    pre_dict = torch.load(weight_p2m + 'cycleGAN_base.pth')
     gen_AB.load_state_dict(pre_dict['gen_AB'])
     gen_BA.load_state_dict(pre_dict['gen_BA'])
     gen_opt.load_state_dict(pre_dict['gen_opt'])
@@ -231,5 +233,5 @@ with torch.no_grad():
         image_grid = make_grid(image_unflat[:25], nrow=5)
         plt.imshow(image_grid.permute(1, 2, 0).squeeze())
 
-        plt.savefig(output_ + f'figure_{idx}_rev.png')
+        plt.savefig(out_p2m + f'figure_{idx}_rev.png')
         plt.show()
