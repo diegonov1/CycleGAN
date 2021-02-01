@@ -207,7 +207,7 @@ class CustomDataSet(Dataset):
         img_loc = os.path.join(self.main_dir, self.total_imgs[idx])
         image = Image.open(img_loc).convert("RGB")
         tensor_image = self.transform(image)
-        return tensor_image
+        return (tensor_image - 0.5) * 2
 
 means = np.array((0.5, 0.5, 0.5))
 stds = np.array((0.5, 0.5, 0.5))
