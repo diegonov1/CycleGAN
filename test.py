@@ -177,7 +177,7 @@ def weights_init(m):
 
 pretrained = True
 if pretrained:
-    pre_dict = torch.load(weight_p2m + 'cycleGAN_base.pth')
+    pre_dict = torch.load(weights_ + 'cycleGAN_299.pth')
     gen_AB.load_state_dict(pre_dict['gen_AB'])
     gen_BA.load_state_dict(pre_dict['gen_BA'])
     gen_opt.load_state_dict(pre_dict['gen_opt'])
