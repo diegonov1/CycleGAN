@@ -207,7 +207,7 @@ class CustomDataSet(Dataset):
         img_loc = os.path.join(self.main_dir, self.total_imgs[idx])
         image = Image.open(img_loc).convert("RGB")
         tensor_image = self.transform(image)
-        return (tensor_image - 0.5) * 2
+        return tensor_image
 
 means = np.array((0.5, 0.5, 0.5))
 stds = np.array((0.5, 0.5, 0.5))
@@ -226,9 +226,10 @@ with torch.no_grad():
         real_b = real_b.to(device)
         fake_a = gen_BA(real_b)
         #fake_a = gen_AB(real_b)
+        real_b = (real_b + 1) / 2
         catenation = torch.cat([real_b, fake_a])
-        image_tensor = (catenation + 1) / 2
-        image_shifted = image_tensor
+        #image_tensor = (catenation + 1) / 2
+        image_shifted = catenation
         image_unflat = image_shifted.detach().cpu().view(-1, *(dim_A, target_shape, target_shape))
         image_grid = make_grid(image_unflat[:25], nrow=5)
         plt.imshow(image_grid.permute(1, 2, 0).squeeze())
