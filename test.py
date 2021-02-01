@@ -194,20 +194,26 @@ else:
 batch_no = 1
 
 class CustomDataSet(Dataset):
-    def __init__(self, main_dir, transform):
-        self.main_dir = main_dir
-        self.transform = transform
-        all_imgs = os.listdir(main_dir)
-        self.total_imgs = natsort.natsorted(all_imgs)
+    def __init__(self, root, transform=None):
+        self.transform = transform_test
+        self.files_A = sorted(glob.glob(os.path.join(root) + '/*.*'))
+        self.new_perm()
+        assert len(self.files_A) > 0, "Make sure you downloaded the images!"
+
+    def new_perm(self):
+        self.randperm = torch.randperm(len(self.files_A))[:len(self.files_A)]
+
+    def __getitem__(self, index):
+        item_A = self.transform(Image.open(self.files_A[index % len(self.files_A)]).convert("RGB"))
+        if item_A.shape[0] != 3: 
+            item_A = item_A.repeat(3, 1, 1)
+        if index == len(self) - 1:
+            self.new_perm()
+        # Old versions of PyTorch didn't support normalization for different-channeled images
+        return item_A
 
     def __len__(self):
-        return len(self.total_imgs)
-
-    def __getitem__(self, idx):
-        img_loc = os.path.join(self.main_dir, self.total_imgs[idx])
-        image = Image.open(img_loc).convert("RGB")
-        tensor_image = self.transform(image)
-        return tensor_image
+        return len(self.files_A)
 
 means = np.array((0.5, 0.5, 0.5))
 stds = np.array((0.5, 0.5, 0.5))
@@ -226,10 +232,9 @@ with torch.no_grad():
         real_b = real_b.to(device)
         fake_a = gen_BA(real_b)
         #fake_a = gen_AB(real_b)
-        real_b = (real_b + 1) / 2
         catenation = torch.cat([real_b, fake_a])
-        #image_tensor = (catenation + 1) / 2
-        image_shifted = catenation
+        image_tensor = (catenation + 1) / 2
+        image_shifted = image_tensor
         image_unflat = image_shifted.detach().cpu().view(-1, *(dim_A, target_shape, target_shape))
         image_grid = make_grid(image_unflat[:25], nrow=5)
         plt.imshow(image_grid.permute(1, 2, 0).squeeze())
