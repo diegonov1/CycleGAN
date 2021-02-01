@@ -224,8 +224,8 @@ with torch.no_grad():
     for idx, img in enumerate(test_loader):
         real_b = nn.functional.interpolate(img, size=target_shape)
         real_b = real_b.to(device)
-        #fake_a = gen_BA(real_b)
-        fake_a = gen_AB(real_b)
+        fake_a = gen_BA(real_b)
+        #fake_a = gen_AB(real_b)
         catenation = torch.cat([real_b, fake_a])
         image_tensor = (catenation + 1) / 2
         image_shifted = image_tensor
